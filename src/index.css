@@ -1,0 +1,34 @@
+@import url('https://fonts.googleapis.com/css2?family=Domine:wght@400..700&family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap');
+@import "tailwindcss";
+
+
+@theme {
+    --font-domine: Domine, serif;
+    --font-inter: Inter, sans-serif;
+
+    --color-bglight: #E9F8FA;
+    --color-primary1: #FF73DE;
+    --color-primary1-darker: #CA43AA;
+    --color-secondary1: #07D5EC;
+    --color-secondary1-darker: #1DC0D3;
+    --color-accent1: #DED26A;
+    --color-accent1-darker: #B5AC5A;
+    --color-accent2: #6FF1FF;
+    --color-accent3: #ADF3FB;
+    --color-accent4: #FFFAD2;
+    --color-accent5: #FFC6F2;
+    --color-textdark: #0B282B;
+}
+
+
+html {
+    scrollbar-width: normal;
+    scrollbar-color: var(--color-primary1) var(--color-bglight)
+}
+
+body {
+    background-color: var(--color-bglight);
+}
+
+
+
