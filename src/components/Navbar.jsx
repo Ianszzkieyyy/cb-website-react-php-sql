@@ -19,8 +19,12 @@ const Navbar = () => {
 
             <div>
                 <button >
-                    <ShoppingCart className="w-6 h-6 text-primary1 stroke-current cursor-pointer"/>
+                    <Link to={"/cart"}>
+                        <ShoppingCart className="w-6 h-6 text-primary1 stroke-current cursor-pointer"/>
+                    </Link>
                 </button>
+
+
 
             </div>
 

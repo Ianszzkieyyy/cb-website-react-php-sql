@@ -1,9 +1,13 @@
 import React, {useState, useEffect} from "react";
-import { useParams, useNavigate, Link } from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom";
+
+import { useCart } from "../components/context/CartContext";
 
 import Navbar from "../components/Navbar";
 import Button from "../components/Button";
 import DisplayRating from "../components/DisplayRating";
+
+import CartIcon from "../assets/icons/shopping-cart.svg?react"
 
 
 const ProductPage = () => {
@@ -15,6 +19,9 @@ const ProductPage = () => {
 
     const [selectedSize, setSelectedSize] = useState("4x2")
     const [selectedFlavor, setSelectedFlavor] = useState("Moist Choco")
+    const [dedicationMsg, setDedicationMsg] = useState("")
+
+    const { addToCart } = useCart()
 
     useEffect(() => {
         const fetchCakeDetails = async() => {
@@ -57,6 +64,10 @@ const ProductPage = () => {
     const handleGoBack = () => {
         navigate(-1);
     };
+
+    const handleTextChange = (e) => {
+      setDedicationMsg(e.target.value)
+    }
 
 
     if (loading) {
@@ -105,7 +116,7 @@ const ProductPage = () => {
     return (
         <div>
             <Navbar />
-            <div className="mx-32 mt-8 font-inter text-textdark">
+            <div className="mx-32 my-8 font-inter text-textdark">
                 <button onClick={handleGoBack} className="text-primary1 text-sm underline decoration-solid underline-offset-3 cursor-pointer hover:text-primary1-darker transition duration-250 ease-in-out">{"< Go Back"}</button>
                 <div className="flex gap-20 p-16">
                     <div className="sticky top-20 self-start w-96 h-96 flex-shrink-0 flex justify-center items-center overflow-hidden">
@@ -122,7 +133,7 @@ const ProductPage = () => {
 
                         <p className="text-lg mb-16">{product.description}</p>
 
-                        <h3 className="font-semibold text-md text-textdark mb-4">Size</h3>
+                        <h3 className="font-semibold text-md mb-4">Size</h3>
                         <div className="mb-16 flex flex-wrap gap-3">
                             {product.sizes.map((size) => (
                                 <label key={size} className={`font-semibold text-sm cursor-pointer px-4 py-2 rounded-full border ${selectedSize === size ? 'bg-primary1 text-white outline-primary1 outline-offset-1 outline-1' : 'bg-bglight text-primary1 border-primary1'} transition-all `}>
@@ -131,7 +142,7 @@ const ProductPage = () => {
                             ))}
                         </div>
 
-                        <h3 className="font-semibold text-md text-textdark mb-4">Flavor</h3>
+                        <h3 className="font-semibold text-md mb-4">Flavor</h3>
                         <div className="mb-16 flex flex-wrap gap-3">
                             {product.flavors.map((flavor) => (
                                 <label key={flavor} className={`font-semibold text-sm cursor-pointer px-4 py-2 rounded-full border ${selectedFlavor === flavor ? 'bg-primary1 text-white outline-primary1 outline-offset-1 outline-1' : 'bg-bglight text-primary1 border-primary1'} transition-all `}>
@@ -140,11 +151,25 @@ const ProductPage = () => {
                             ))}
                         </div>
                         
-                        <h3>Dedication / Request</h3>
-                        <textarea name="dedication" id="dedication"></textarea>
-                        <p>
-
-                        </p>
+                        <h3 className="font-semibold text-md mb-2">Dedication / Requests</h3>
+                        <p className="text-sm mb-4">If you wish to leave it empty, please input N/A. </p>
+                        <textarea className="w-full p-2.5 mb-16 text-sm rounded-md border-1 resize-none border-primary1 placeholder-gray-400 focus:border-primary1 focus:outline-3 focus:outline-secondary1 focus:outline-offset-2" rows={4} name="dedication" id="dedication" onChange={handleTextChange} value={dedicationMsg} placeholder="Please enter your dedication / requests here (Maximum of 200 Characters)" maxLength={200}></textarea>
+                        <div className="flex justify-end">
+                          <Button icon={CartIcon} text={"Add to Cart"} type="primary" clickFunction={() => {
+                            const cartItem = {
+                              id: product.id,
+                              name: product.name,
+                              flavor: selectedFlavor,
+                              size: selectedSize,
+                              dedication: dedicationMsg,
+                              price: product.price,
+                              image: product.image
+                            }
+                            addToCart(cartItem)
+                            alert("Added to cart!")
+                          }}/>
+                        </div>
+                        
                         
                     </div>
                 </div>
