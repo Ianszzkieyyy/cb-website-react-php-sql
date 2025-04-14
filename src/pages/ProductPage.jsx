@@ -3,7 +3,7 @@ import { useParams, useNavigate, Link } from "react-router-dom";
 
 import Navbar from "../components/Navbar";
 import Button from "../components/Button";
-import RadioButton from "../components/RadioButton";
+import DisplayRating from "../components/DisplayRating";
 
 
 const ProductPage = () => {
@@ -12,6 +12,9 @@ const ProductPage = () => {
     const [product, setProduct] = useState(null)
     const [loading, setLoading] = useState(true)
     const [error, setError] = useState(null)
+
+    const [selectedSize, setSelectedSize] = useState("4x2")
+    const [selectedFlavor, setSelectedFlavor] = useState("Moist Choco")
 
     useEffect(() => {
         const fetchCakeDetails = async() => {
@@ -102,35 +105,48 @@ const ProductPage = () => {
     return (
         <div>
             <Navbar />
-            <button onClick={handleGoBack}>{"< Go Back"}</button>
-            <div className="flex">
-                <div>
-                    <img src={product.image} alt=""/>
-                </div>
-                <div>
-                    <h1>{product.name}</h1>
-                    <h2>{product.rating} Stars</h2>
-                    <div className="flex">
-                        {product.category.map(category => (
-                            <Button text={category} size="small" type="secondary" />
-                        ))}
+            <div className="mx-32 mt-8 font-inter text-textdark">
+                <button onClick={handleGoBack} className="text-primary1 text-sm underline decoration-solid underline-offset-3 cursor-pointer hover:text-primary1-darker transition duration-250 ease-in-out">{"< Go Back"}</button>
+                <div className="flex gap-20 p-16">
+                    <div className="sticky top-20 self-start w-96 h-96 flex-shrink-0 flex justify-center items-center overflow-hidden">
+                        <img src={product.image} className="object-cover w-full h-full" alt=""/>
                     </div>
-                    <p>{product.description}</p>
+                    <div>
+                        <h1 className="font-domine font-bold text-4xl mb-4">{product.name}</h1>
+                        <div className="flex gap-4 mb-8"> <DisplayRating rating={product.rating}/> {product.rating} Stars</div>
+                        <div className="flex gap-2 mb-12 overflow-auto">
+                            {product.category.map(category => (
+                                <Button text={category} size="small" type="accent" />
+                            ))}
+                        </div>
 
-                    <h3>Size</h3>
-                    {product.sizes.map(size => (
-                        <label key={size} className="block mb-1">
-                            <input type="radio" name="size" value={size}/>{size}
-                        </label>
-                    ))}
-                    <h3>Flavor</h3>
-                    {product.flavors.map(flavor => (
-                        <label key={flavor} className="block mb-1">
-                            <input type="radio" name="flavor" value={flavor}/>{flavor}
-                        </label>
-                    ))}
-                    <h3>Dedication / Request</h3>
-                    <textarea name="dedication" id="dedication"></textarea>
+                        <p className="text-lg mb-16">{product.description}</p>
+
+                        <h3 className="font-semibold text-md text-textdark mb-4">Size</h3>
+                        <div className="mb-16 flex flex-wrap gap-3">
+                            {product.sizes.map((size) => (
+                                <label key={size} className={`font-semibold text-sm cursor-pointer px-4 py-2 rounded-full border ${selectedSize === size ? 'bg-primary1 text-white outline-primary1 outline-offset-1 outline-1' : 'bg-bglight text-primary1 border-primary1'} transition-all `}>
+                                    <input type="radio" name="size" value={size} className="sr-only" checked={selectedSize === size} onChange={() => setSelectedSize(size)} />{size}
+                                </label>
+                            ))}
+                        </div>
+
+                        <h3 className="font-semibold text-md text-textdark mb-4">Flavor</h3>
+                        <div className="mb-16 flex flex-wrap gap-3">
+                            {product.flavors.map((flavor) => (
+                                <label key={flavor} className={`font-semibold text-sm cursor-pointer px-4 py-2 rounded-full border ${selectedFlavor === flavor ? 'bg-primary1 text-white outline-primary1 outline-offset-1 outline-1' : 'bg-bglight text-primary1 border-primary1'} transition-all `}>
+                                    <input type="radio" name="flavor" value={flavor} className="sr-only" checked={selectedFlavor === flavor} onChange={() => setSelectedFlavor(flavor)} />{flavor}
+                                </label>
+                            ))}
+                        </div>
+                        
+                        <h3>Dedication / Request</h3>
+                        <textarea name="dedication" id="dedication"></textarea>
+                        <p>
+
+                        </p>
+                        
+                    </div>
                 </div>
             </div>
 

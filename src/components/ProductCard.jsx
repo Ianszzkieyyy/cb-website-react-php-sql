@@ -30,7 +30,7 @@ const ProductCard = ({product}) => {
                 </div>
                 <div className="flex justify-between items-center gap-6">
                     <div className="flex items-center gap-2">
-                        <IconRating className="h-5"/>
+                        <IconRating className="h-5 text-primary1"/>
                         <h3 className="text-sm font-semibold">{rating}</h3>
                     </div>
                     <Button clickFunction={handleViewProduct} type="primary" shape="square" text={"View Cake"} icon={ShoppingCart} size="small"/>
