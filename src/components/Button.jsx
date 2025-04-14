@@ -1,6 +1,6 @@
 import React from "react";
 
-const Button = ({text, shape="pill", type="primary", icon: Icon, size="regular"}) => {
+const Button = ({text, shape="pill", type="primary", icon: Icon, size="regular", clickFunction}) => {
     const baseClasses = `font-inter font-semibold cursor-pointer transition duration-300 ease-in-out`
 
     const hasIcon = !!Icon;
@@ -23,7 +23,7 @@ const Button = ({text, shape="pill", type="primary", icon: Icon, size="regular"}
     }
 
     return (
-        <button className={`${baseClasses} ${shapeClasses[shape] || shapeClasses["pill"]} ${typeClasses[type] || typeClasses["primary"]} ${sizeClasses[size]} ${hasIcon ? "flex items-center gap-1" : ""}`}>
+        <button onClick={clickFunction} className={`${baseClasses} ${shapeClasses[shape] || shapeClasses["pill"]} ${typeClasses[type] || typeClasses["primary"]} ${sizeClasses[size]} ${hasIcon ? "flex items-center gap-1" : ""}`}>
             {hasIcon && <Icon className={size === "small" ? "h-4" : ""}/>}
             {text}
         </button>
