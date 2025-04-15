@@ -31,7 +31,10 @@ const CartItem = ({item}) => {
                 </div>
             </div>
             <div className="py-4 flex-1 justify-self-end">
-                <h2 className="font-semibold mb-2 text-2xl text-end">₱{item.price}</h2>
+                <div className="font-semibold mb-2 text-2xl text-end">
+                    <span className="text-gray-300 text-sm mr-2">Total:</span>
+                    ₱{item.price}
+                </div>
                 <div className="flex justify-end">
                     <Button text={"Remove"} size="small" type="outline" icon={TrashIcon} clickFunction={() => removeFromCart(item.id)}/>
                 </div>
