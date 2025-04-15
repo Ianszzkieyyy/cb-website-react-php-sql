@@ -1,16 +1,25 @@
-import React from "react";
+import React, {useState} from "react";
 
 import ProductHeaderImg from "../assets/images/product_header_img.png"
 import Button from "../components/Button";
 import SearchFilters from "../components/SearchFilters";
-import ProductCard from "../components/ProductCard";
 
 // for testing purposes
-import SampleCakeImg from "../assets/images/samplecake.png"
 import Navbar from "../components/Navbar";
 import ProductGrid from "../components/ProductGrid";
 
 const ProductsPage = () => {
+    const [activeFilters, setActiveFilters] = useState({
+        categories: null,
+        sizes: null,
+        minPrice: null,
+        maxPrice: null,
+    })
+
+    const handleFilterChange = (filters) => {
+        setActiveFilters(filters);
+    };
+
     return (
         <div>
             <Navbar />
@@ -34,7 +43,7 @@ const ProductsPage = () => {
                 </div>
 
                 <div className="mt-12 flex gap-16">
-                    <SearchFilters />
+                    <SearchFilters onFilterChange={handleFilterChange}/>
                     <div className="w-0.25 bg-textdark opacity-15"></div>
                     <div>
                         <h2 className="font-domine font-bold text-xl mb-8">Products</h2>
@@ -48,7 +57,7 @@ const ProductsPage = () => {
                             </div>
                         </div>
                         {/* Card Logic will go here */}
-                        <ProductGrid />
+                        <ProductGrid activeFilters={activeFilters}/>
                     </div>
                 </div>
 

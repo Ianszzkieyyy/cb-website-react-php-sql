@@ -36,7 +36,7 @@ const CartItem = ({item}) => {
                     ₱{item.price}
                 </div>
                 <div className="flex justify-end">
-                    <Button text={"Remove"} size="small" type="outline" icon={TrashIcon} clickFunction={() => removeFromCart(item.id)}/>
+                    <Button text={"Remove"} size="small" type="outline" icon={TrashIcon} clickFunction={() => removeFromCart(item.cartItemId)}/>
                 </div>
                 
             </div>

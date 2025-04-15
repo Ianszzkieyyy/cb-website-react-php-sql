@@ -1,16 +1,37 @@
 import React, { useEffect, useState } from "react";
 import ProductCard from "./ProductCard";
 
-const ProductGrid = () => {
+const ProductGrid = ({activeFilters}) => {
     const [products, setProducts] = useState([])
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
+    
 
     useEffect(() => {
         const fetchProducts = async() => {
             try {
                 setLoading(true)
-                const response = await fetch('https://dummyjson.com/products')
+
+                const queryParams = []
+
+                if (activeFilters?.categories) {
+                    queryParams.push(`categories=${activeFilters.categories.join(',')}`);
+                }
+                
+                if (activeFilters?.sizes) {
+                    queryParams.push(`sizes=${activeFilters.sizes.join(',')}`);
+                }
+                
+                if (activeFilters?.minPrice) {
+                    queryParams.push(`minPrice=${activeFilters.minPrice}`);
+                }
+                
+                if (activeFilters?.maxPrice) {
+                    queryParams.push(`maxPrice=${activeFilters.maxPrice}`);
+                }
+
+                const queryString = queryParams.length > 0 ? `?${queryParams.join('&')}` : '';
+                const response = await fetch(`http://localhost/cakes_bakes_backend/products/${queryString}`)
 
                 if (!response.ok) {
                     throw new Error('Failed to fetch products')
@@ -18,12 +39,12 @@ const ProductGrid = () => {
 
                 const data = await response.json();
 
-                const transformedProducts = data.products.map(product => ({
-                    id: product.id,
-                    name: product.title,
-                    price: product.price.toFixed(2),
-                    rating: product.rating.toFixed(1),
-                    img: product.thumbnail
+                const transformedProducts = data.map(product => ({
+                    id: product.product_id,
+                    name: product.name,
+                    price: parseFloat(product.price).toFixed(2),
+                    rating: parseFloat(product.rating).toFixed(1),
+                    img: `http://localhost/cakes_bakes_backend/uploads/thumbnails/${product.image_url}`
                 }))
 
                 setProducts(transformedProducts)
@@ -35,7 +56,7 @@ const ProductGrid = () => {
         }
 
         fetchProducts()
-    }, [])
+    }, [activeFilters])
 
     if (loading) {
         return (

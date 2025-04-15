@@ -16,6 +16,7 @@ const ProductPage = () => {
     const [product, setProduct] = useState(null)
     const [loading, setLoading] = useState(true)
     const [error, setError] = useState(null)
+    const [showSuccess, setShowSuccess] = useState(false)
 
     const [calculatedPrice, setCalculatedPrice] = useState(0);
     const [selectedSize, setSelectedSize] = useState("4x2")
@@ -29,7 +30,7 @@ const ProductPage = () => {
         const fetchCakeDetails = async() => {
             try {
                 setLoading(true)
-                const response = await fetch(`https://dummyjson.com/products/${id}`)
+                const response = await fetch(`http://localhost/cakes_bakes_backend/products/${id}`)
 
                 if (!response.ok) {
                     throw new Error('failed to fetch product details')
@@ -38,15 +39,15 @@ const ProductPage = () => {
                 const data = await response.json()
 
                 const transformedProduct = {
-                    id: data.id,
-                    name: data.title,
+                    id: data.product_id,
+                    name: data.name,
                     description: data.description,
-                    price: data.price.toFixed(2),
-                    rating: data.rating.toFixed(1),
-                    image: data.thumbnail,
-                    category: ["Dedication", "Bento"],
+                    price: data.price,
+                    rating: data.rating,
+                    image: `http://localhost/cakes_bakes_backend/uploads/images/${data.image_url}`,
+                    category: data.category,
                     flavors: ["Moist Choco", "Mocha Chiffon", "Vanilla Chiffon", "Strawberry Chiffon"],
-                    sizes: ["4x2", "5x3", "6x4"],
+                    sizes: data.size,
                 }
 
                 setProduct(transformedProduct)
@@ -68,6 +69,13 @@ const ProductPage = () => {
     const handleGoBack = () => {
         navigate(-1);
     };
+
+    const handleShowAdded = () => {
+      setShowSuccess(true)
+      setTimeout(() => setShowSuccess(false), 3000)
+    }
+
+
 
     const calculatePrice = (basePrice, selectedSize, allSizes) => {
       const sizeIndex = allSizes.indexOf(selectedSize)
@@ -142,10 +150,34 @@ const ProductPage = () => {
         <div>
             <Navbar />
             <div className="mx-32 my-8 font-inter text-textdark">
+            <div className="fixed top-4 left-1/2 transform -translate-x-1/2 z-50">
+              <div
+                className={`transition-opacity duration-500 ease-in-out ${
+                  showSuccess ? 'opacity-100' : 'opacity-0 pointer-events-none'
+                }`}
+              >
+                <div className="flex items-center p-4 text-sm text-white rounded-lg bg-accent1 shadow-lg">
+                  <svg
+                    className="shrink-0 inline w-4 h-4 me-3"
+                    aria-hidden="true"
+                    xmlns="http://www.w3.org/2000/svg"
+                    fill="currentColor"
+                    viewBox="0 0 20 20"
+                  >
+                    <path d="M10 .5a9.5 9.5 0 1 0 9.5 9.5A9.51 9.51 0 0 0 10 .5ZM9.5 4a1.5 1.5 0 1 1 0 3 1.5 1.5 0 0 1 0-3ZM12 15H8a1 1 0 0 1 0-2h1v-3H8a1 1 0 0 1 0-2h2a1 1 0 0 1 1 1v4h1a1 1 0 0 1 0 2Z" />
+                  </svg>
+                  <span className="sr-only">Info</span>
+                  <div>
+                    <span className="font-medium">Success!</span> Your item was added to the cart.
+                  </div>
+                </div>
+              </div>
+            </div>
+
                 <button onClick={handleGoBack} className="text-primary1 text-sm underline decoration-solid underline-offset-3 cursor-pointer hover:text-primary1-darker transition duration-250 ease-in-out">{"< Go Back"}</button>
                 <div className="flex gap-20 p-16">
                     <div className="sticky top-20 self-start w-96 h-96 flex-shrink-0 flex justify-center items-center overflow-hidden">
-                        <img src={product.image} className="object-cover w-full h-full" alt=""/>
+                        <img src={product.image} className="object-cover w-full h-full " alt=""/>
                     </div>
                     <div>
                         <h1 className="font-domine font-bold text-4xl mb-4">{product.name}</h1>
@@ -201,6 +233,7 @@ const ProductPage = () => {
                         <div className="flex justify-end">
                           <Button icon={CartIcon} text={"Add to Cart"} type="primary" clickFunction={() => {
                             const cartItem = {
+                              cartItemId: crypto.randomUUID(),
                               id: product.id,
                               name: product.name,
                               flavor: selectedFlavor,
@@ -211,8 +244,10 @@ const ProductPage = () => {
                               image: product.image
                             }
                             addToCart(cartItem)
+                            handleShowAdded()
                           }}/>
                         </div>
+
                         
                         
                     </div>

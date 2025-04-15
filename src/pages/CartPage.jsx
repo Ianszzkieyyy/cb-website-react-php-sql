@@ -5,6 +5,8 @@ import { useCart } from "../components/context/CartContext";
 
 import Navbar from "../components/Navbar";
 import CartItem from "../components/CartItem";
+import Button from "../components/Button";
+
 
 const CartPage = () => {
     const { cartItems, cleanCart } = useCart()
@@ -25,6 +27,10 @@ const CartPage = () => {
                     {cartItems.map(item => (
                         <CartItem item={item}/>
                     ))}
+                    <div className="flex justify-end">
+                        {cartItems.length > 0 && <Button text={"Proceed to Checkout"} type="accent"/>}
+                    </div>
+                    
                 </div>
             </div>
             
