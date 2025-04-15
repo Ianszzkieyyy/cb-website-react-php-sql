@@ -17,9 +17,11 @@ const ProductPage = () => {
     const [loading, setLoading] = useState(true)
     const [error, setError] = useState(null)
 
+    const [calculatedPrice, setCalculatedPrice] = useState(0);
     const [selectedSize, setSelectedSize] = useState("4x2")
     const [selectedFlavor, setSelectedFlavor] = useState("Moist Choco")
     const [dedicationMsg, setDedicationMsg] = useState("")
+    const [quantity, setQuantity] = useState(1)
 
     const { addToCart } = useCart()
 
@@ -48,6 +50,7 @@ const ProductPage = () => {
                 }
 
                 setProduct(transformedProduct)
+                setSelectedSize(transformedProduct.sizes[0])
                 setLoading(false)
             } catch (err) {
                 console.error('Fetch error:', err);
@@ -61,13 +64,35 @@ const ProductPage = () => {
         }
     }, [id])
 
+
     const handleGoBack = () => {
         navigate(-1);
     };
 
+    const calculatePrice = (basePrice, selectedSize, allSizes) => {
+      const sizeIndex = allSizes.indexOf(selectedSize)
+      const priceModifier = 1 + (sizeIndex * 0.3)
+      return (basePrice * priceModifier).toFixed(2)
+    }
+
+    useEffect(() => {
+      if (product && product.price) {
+        const updatedPrice = calculatePrice(product.price, selectedSize, product.sizes);
+        setCalculatedPrice(updatedPrice);
+      }
+    }, [selectedSize, product]);
+
     const handleTextChange = (e) => {
       setDedicationMsg(e.target.value)
     }
+
+    const increment = () => {
+      if (quantity < 3) setQuantity(prev => prev + 1); 
+    };
+  
+    const decrement = () => {
+      if (quantity > 1) setQuantity(prev => prev - 1); 
+    };
 
 
     if (loading) {
@@ -131,10 +156,12 @@ const ProductPage = () => {
                             ))}
                         </div>
 
-                        <p className="text-lg mb-16">{product.description}</p>
+                        <h1 className="font-domine font-bold text-4xl mb-12 text-primary1">₱ {calculatedPrice || product.price}</h1>
+
+                        <p className="text-lg mb-12">{product.description}</p>
 
                         <h3 className="font-semibold text-md mb-4">Size</h3>
-                        <div className="mb-16 flex flex-wrap gap-3">
+                        <div className="mb-12 flex flex-wrap gap-3">
                             {product.sizes.map((size) => (
                                 <label key={size} className={`font-semibold text-sm cursor-pointer px-4 py-2 rounded-full border ${selectedSize === size ? 'bg-primary1 text-white outline-primary1 outline-offset-1 outline-1' : 'bg-bglight text-primary1 border-primary1'} transition-all `}>
                                     <input type="radio" name="size" value={size} className="sr-only" checked={selectedSize === size} onChange={() => setSelectedSize(size)} />{size}
@@ -143,12 +170,29 @@ const ProductPage = () => {
                         </div>
 
                         <h3 className="font-semibold text-md mb-4">Flavor</h3>
-                        <div className="mb-16 flex flex-wrap gap-3">
+                        <div className="mb-12 flex flex-wrap gap-3">
                             {product.flavors.map((flavor) => (
                                 <label key={flavor} className={`font-semibold text-sm cursor-pointer px-4 py-2 rounded-full border ${selectedFlavor === flavor ? 'bg-primary1 text-white outline-primary1 outline-offset-1 outline-1' : 'bg-bglight text-primary1 border-primary1'} transition-all `}>
                                     <input type="radio" name="flavor" value={flavor} className="sr-only" checked={selectedFlavor === flavor} onChange={() => setSelectedFlavor(flavor)} />{flavor}
                                 </label>
                             ))}
+                        </div>
+
+                        <h3 className="font-semibold text-md mb-4">Quantity</h3>
+                        <div className="items-center gap-2 mb-12 border-1 border-primary1 inline-flex rounded-full p-1">
+                          <button
+                            onClick={decrement}
+                            className="w-8 h-8 text-md rounded-full bg-bglight hover:bg-accent2 active:bg-primary1  transition-all"
+                          >
+                            -
+                          </button>
+                          <span className="text-lg font-medium w-10 text-center">{quantity}</span>
+                          <button
+                            onClick={increment}
+                            className="w-8 h-8 text-md rounded-full bg-bglight hover:bg-accent2 active:bg-primary1 transition-all"
+                          >
+                            +
+                          </button>
                         </div>
                         
                         <h3 className="font-semibold text-md mb-2">Dedication / Requests</h3>
@@ -162,11 +206,11 @@ const ProductPage = () => {
                               flavor: selectedFlavor,
                               size: selectedSize,
                               dedication: dedicationMsg,
-                              price: product.price,
+                              quantity: quantity,
+                              price: parseFloat(calculatedPrice) * quantity,
                               image: product.image
                             }
                             addToCart(cartItem)
-                            alert("Added to cart!")
                           }}/>
                         </div>
                         

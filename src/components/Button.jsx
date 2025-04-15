@@ -9,7 +9,7 @@ const Button = ({text, shape="pill", type="primary", icon: Icon, size="regular",
         primary: "bg-primary1 hover:bg-primary1-darker text-white",
         secondary: "bg-secondary1 hover:bg-secondary1-darker text-white",
         accent: "bg-accent1 hover:bg-accent1-darker text-white",
-        outline: "bg-transparent border-3 border-secondary1 hover:border-secondary1-darker text-secondary1 hover:text-secondary1-darker",
+        outline: "bg-transparent border-2 border-secondary1 hover:border-secondary1-darker text-secondary1 hover:text-secondary1-darker",
     }
 
     const shapeClasses = {
