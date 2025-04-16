@@ -9,7 +9,6 @@ const App = () => {
       <Navbar />
       <HomePage/>
     </div>
-    
   )
 }
 

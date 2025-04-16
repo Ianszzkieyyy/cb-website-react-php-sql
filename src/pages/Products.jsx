@@ -1,24 +1,51 @@
-import React, {useState} from "react";
+import React, {useState, useEffect} from "react";
+import { useSearchParams } from "react-router-dom";
 
 import ProductHeaderImg from "../assets/images/product_header_img.png"
 import Button from "../components/Button";
 import SearchFilters from "../components/SearchFilters";
 
-// for testing purposes
 import Navbar from "../components/Navbar";
 import ProductGrid from "../components/ProductGrid";
 
 const ProductsPage = () => {
+    const [searchParams, setSearchParams] = useSearchParams()
+
+
     const [activeFilters, setActiveFilters] = useState({
-        categories: null,
-        sizes: null,
-        minPrice: null,
-        maxPrice: null,
-    })
+        categories: searchParams.get('categories') ? searchParams.get('categories').split(',') : null,
+        sizes: searchParams.get('sizes') ? searchParams.get('sizes').split(',') : null,
+        minPrice: searchParams.get('minPrice') ? parseFloat(searchParams.get('minPrice')) : null,
+        maxPrice: searchParams.get('maxPrice') ? parseFloat(searchParams.get('maxPrice')) : null,
+    });
+    
+
+    useEffect(() => {
+        const params = new URLSearchParams();
+        
+        if (activeFilters.categories) {
+            params.set('categories', activeFilters.categories.join(','));
+        }
+        
+        if (activeFilters.sizes) {
+            params.set('sizes', activeFilters.sizes.join(','));
+        }
+        
+        if (activeFilters.minPrice) {
+            params.set('minPrice', activeFilters.minPrice);
+        }
+        
+        if (activeFilters.maxPrice) {
+            params.set('maxPrice', activeFilters.maxPrice);
+        }
+        
+        setSearchParams(params);
+    }, [activeFilters, setSearchParams]);
 
     const handleFilterChange = (filters) => {
         setActiveFilters(filters);
     };
+
 
     return (
         <div>
@@ -42,13 +69,13 @@ const ProductsPage = () => {
                     </div>
                 </div>
 
-                <div className="mt-12 flex gap-16">
+                <div className="my-16 flex gap-16">
                     <SearchFilters onFilterChange={handleFilterChange}/>
                     <div className="w-0.25 bg-textdark opacity-15"></div>
                     <div>
                         <h2 className="font-domine font-bold text-xl mb-8">Products</h2>
                         <div className="flex gap-20 mb-16 items-center">
-                            <h3 className="text-md font-medium">Sort By</h3>
+                            <h3 className="font-inter text-md font-medium">Sort By</h3>
                             <div className="flex gap-2">
                                 <Button text={"Most Popular"} size="small" shape="pill" type="secondary"/>
                                 <Button text={"Highest Rated"} size="small" shape="pill" type="secondary"/>
