@@ -9,11 +9,11 @@ import Button from "../components/Button";
 
 
 const CartPage = () => {
-    const { cartItems, cleanCart } = useCart()
+    const { cartItems } = useCart()
     const navigate = useNavigate()
-
+ 
     const handleGoBack = () => {
-        navigate(-1);
+        navigate(-1); 
     };
 
     return (
