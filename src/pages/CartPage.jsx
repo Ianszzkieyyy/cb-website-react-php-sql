@@ -1,6 +1,6 @@
-import React from "react";
+import React, {useEffect, useState} from "react";
 
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
 import { useCart } from "../components/context/CartContext";
 
 import Navbar from "../components/Navbar";
@@ -9,12 +9,19 @@ import Button from "../components/Button";
 
 
 const CartPage = () => {
+    const [totalPrice, setTotalPrice] = useState(0)
     const { cartItems } = useCart()
     const navigate = useNavigate()
  
     const handleGoBack = () => {
         navigate(-1); 
     };
+
+    useEffect(() => {
+        const total = cartItems.reduce((acc, item) => acc + item.price, 0);
+        setTotalPrice(total);
+    }
+    , [cartItems]);
 
     return (
         <div>
@@ -27,13 +34,16 @@ const CartPage = () => {
                     {cartItems.map(item => (
                         <CartItem item={item}/>
                     ))}
-                    <div className="flex justify-end">
-                        {cartItems.length > 0 && <Button text={"Proceed to Checkout"} type="accent"/>}
-                    </div>
+                    {cartItems.length > 0 && 
+                    <div className="flex justify-end items-end gap-4 font-semibold">
+                        <div className=" text-gray-300 text-sm">Total: <span className="text-lg text-textdark">₱{totalPrice}</span></div>
+                        <Link to={"/checkout"}>
+                            <Button text={"Proceed to Checkout"} type="accent"/>
+                        </Link>
+                    </div>}
                     
                 </div>
             </div>
-            
         </div>
     )
 

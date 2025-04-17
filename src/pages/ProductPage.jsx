@@ -10,6 +10,7 @@ import DatePicker from "../components/DatePicker";
 
 import CartIcon from "../assets/icons/shopping-cart.svg?react"
 
+
 const dayAfterTomorrow = new Date()
 dayAfterTomorrow.setDate(dayAfterTomorrow.getDate() + 2)
 

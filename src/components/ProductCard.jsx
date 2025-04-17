@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 
 import IconRating from "../assets/logos/icon_logo_pink.svg?react"
 import ShoppingCart from "../assets/icons/shopping-cart.svg?react"
+import BagIcon from "../assets/icons/shopping-bag.svg?react"
 import Button from "./Button";
 
 const ProductCard = ({product}) => {
@@ -33,12 +34,9 @@ const ProductCard = ({product}) => {
                         <IconRating className="h-5 text-primary1"/>
                         <h3 className="text-sm font-semibold">{rating}</h3>
                     </div>
-                    <Button clickFunction={handleViewProduct} type="primary" shape="square" text={"View Cake"} icon={ShoppingCart} size="small"/>
+                    <Button clickFunction={handleViewProduct} type="primary" shape="square" text={"View Cake"} icon={BagIcon} size="small"/>
                 </div>
             </div>
-
-
-
         </div>
     )
 
