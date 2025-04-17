@@ -7,7 +7,11 @@ export default defineConfig({
     "./src/**/*.{js,jsx}",
   ],
   theme: {
-    extend: {},
+    extend: {
+      animation: {
+        "spin-slow": "spin 6s linear infinite",
+      },
+    },
   },
   plugins: [],
 });

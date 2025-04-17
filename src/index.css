@@ -16,10 +16,15 @@
     --color-accent1: #DED26A;
     --color-accent1-darker: #B5AC5A;
     --color-accent2: #6FF1FF;
+    --color-accent2-darker: #98e4eb;
     --color-accent3: #ADF3FB;
+    --color-accent3-darker: #adf3fb;
     --color-accent4: #FFFAD2;
+    --color-accent4-darker: #e6e0b6;
     --color-accent5: #FFC6F2;
+    --color-accent5-darker: #ffa7ec;
     --color-accent6: #FDE61C;
+    --color-accent6-darker: #ab9b20;
     --color-textdark: #0B282B;
 }
 
@@ -31,6 +36,7 @@ html {
 body {
     background-color: var(--color-bglight);
     overflow-y: scroll;
+    overflow-x: hidden;
 }
 
 @theme inline {
@@ -147,5 +153,9 @@ body {
   body {
     @apply bg-background text-foreground;
     }
+}
+
+.spin-slower {
+    animation-duration: 6s; 
 }
 

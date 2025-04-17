@@ -19,6 +19,7 @@ const ProductPage = () => {
     const [product, setProduct] = useState(null)
     const [loading, setLoading] = useState(true)
     const [error, setError] = useState(null)
+    const [formError, setFormError] = useState({})
     const [showSuccess, setShowSuccess] = useState(false)
 
     const [calculatedPrice, setCalculatedPrice] = useState(0)
@@ -106,6 +107,39 @@ const ProductPage = () => {
       if (quantity > 1) setQuantity(prev => prev - 1); 
     };
 
+    const validateForm = () => {
+      const newErrors = {}
+
+      if (!dedicationMsg) newErrors.dedication = 'Please enter a dedication or N/A'
+      if (!date || date < dayAfterTomorrow) newErrors.date = 'Please select a valid delivery date'
+
+      setFormError(newErrors)
+      return Object.keys(newErrors).length === 0
+    }
+
+    const handleSubmit = (e) => {
+      e.preventDefault()
+    
+      if (validateForm()) {
+        const cartItem = {
+          cartItemId: crypto.randomUUID(),
+          id: product.id,
+          name: product.name,
+          flavor: selectedFlavor,
+          size: selectedSize,
+          dedication: dedicationMsg,
+          quantity: quantity,
+          deliveryDate: date,
+          price: parseFloat(calculatedPrice) * quantity,
+          image: product.image
+        };
+        
+        addToCart(cartItem)
+        handleShowAdded()
+      }
+
+    }
+
 
     if (loading) {
         return (
@@ -179,11 +213,13 @@ const ProductPage = () => {
         </div>
 
         <button onClick={handleGoBack} className="text-primary1 text-sm underline decoration-solid underline-offset-3 cursor-pointer hover:text-primary1-darker transition duration-250 ease-in-out">{"< Go Back"}</button>
+
         <div className="flex gap-20 p-16">
-                <div className="sticky top-20 self-start w-96 h-96 flex-shrink-0 flex justify-center items-center overflow-hidden">
-                  <img src={product.image} className="object-cover w-full h-full " alt=""/>
-                </div>
-                <div>
+          <div className="sticky top-20 self-start w-96 h-96 flex-shrink-0 flex justify-center items-center overflow-hidden">
+              <img src={product.image} className="object-cover w-full h-full " alt=""/>
+          </div>
+
+            <form onSubmit={handleSubmit} className="product-form">
                 <h1 className="font-domine font-bold text-4xl mb-4">{product.name}</h1>
                 <div className="flex gap-4 mb-8"> <DisplayRating rating={product.rating}/> {product.rating} Stars</div>
                 <div className="flex gap-2 mb-12 overflow-auto">
@@ -209,7 +245,8 @@ const ProductPage = () => {
                         </label>
                     ))}
                 </div>
-                <h3 className="font-semibold text-md mb-4">Quantity</h3>
+                <h3 className="font-semibold text-md mb-1">Quantity</h3>
+                <p className="text-sm text-gray-500 mb-4">Maximum of 3 items per order. </p>
                 <div className="items-center gap-2 mb-12 border-1 border-primary1 inline-flex rounded-full p-1">
                   <button
                     onClick={decrement}
@@ -229,35 +266,28 @@ const ProductPage = () => {
                 <h3 className="font-semibold text-md mb-4">Pick a Preferred Delivery Date</h3>
                 <div className="mb-12">
                   <DatePicker date={date} setDate={setDate} dayAfterTomorrow={dayAfterTomorrow}/>
+                  {formError.date && <p className="text-red-500 text-sm mt-1">{formError.date}</p>}
                 </div>
                 
-                <h3 className="font-semibold text-md mb-2">Dedication / Requests</h3>
-                <p className="text-sm mb-4">If you wish to leave it empty, please input N/A. </p>
-                <textarea className="w-full p-2.5 mb-16 text-sm rounded-md border-1 resize-none border-primary1 placeholder-gray-400 focus:border-primary1 focus:outline-3 focus:outline-secondary1 focus:outline-offset-2" rows={4} name="dedication" id="dedication" onChange={handleTextChange} value={dedicationMsg} placeholder="Please enter your dedication / requests here (Maximum of 200 Characters)" maxLength={200}></textarea>
+                <div className="mb-16">
+                  <h3 className="font-semibold text-md mb-1">Dedication / Requests</h3>
+                  <p className="text-sm text-gray-500 mb-4">If you wish to leave it empty, please input N/A. </p>
+                  <textarea className="w-full p-2.5 text-sm rounded-md border-1 resize-none border-primary1 placeholder-gray-400 focus:border-primary1 focus:outline-3 focus:outline-secondary1 focus:outline-offset-2" rows={4} name="dedication" id="dedication" onChange={handleTextChange} value={dedicationMsg} placeholder="Please enter your dedication / requests here (Maximum of 200 Characters)" maxLength={200}></textarea>
+                  {formError.dedication && <p className="text-red-500 text-sm">{formError.dedication}</p>}
+                </div>
+
 
                 <div className="flex justify-end">
-                  <Button icon={CartIcon} text={"Add to Cart"} type="primary" clickFunction={() => {
-                    const cartItem = {
-                      cartItemId: crypto.randomUUID(),
-                      id: product.id,
-                      name: product.name,
-                      flavor: selectedFlavor,
-                      size: selectedSize,
-                      dedication: dedicationMsg,
-                      quantity: quantity,
-                      deliveryDate: date,
-                      price: parseFloat(calculatedPrice) * quantity,
-                      image: product.image
-                    }
-                    addToCart(cartItem)
-                    handleShowAdded()
-                  }}/>
+                  <div className="relative">
+                    <input type="submit" value="" />
+                    <Button icon={CartIcon} text={"Add to Cart"} type="primary"/>
+                  </div>
                 </div>
                 
                 
-            </div>
+            </form>
+          </div>
         </div>
-      </div>
 
       </div>
     )
