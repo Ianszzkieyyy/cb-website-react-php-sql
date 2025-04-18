@@ -4,30 +4,27 @@ import Button from "./Button";
 import { useSearchParams } from "react-router-dom";
 
 const SearchFilters = ({ onFilterChange }) => {
-    const [searchParams] = useSearchParams();
+    const [searchParams] = useSearchParams()
     
-    // Initialize state from URL parameters
     const [selectedCategories, setSelectedCategories] = useState(() => {
-        const categoriesParam = searchParams.get('categories');
-        return categoriesParam ? categoriesParam.split(',') : [];
+        const categoriesParam = searchParams.get('categories')
+        return categoriesParam ? categoriesParam.split(',') : []
     });
     
     const [selectedSizes, setSelectedSizes] = useState(() => {
-        const sizesParam = searchParams.get('sizes');
-        return sizesParam ? sizesParam.split(',') : [];
+        const sizesParam = searchParams.get('sizes')
+        return sizesParam ? sizesParam.split(',') : []
     });
     
-    const [minPrice, setMinPrice] = useState(() => searchParams.get('minPrice') || "");
-    const [maxPrice, setMaxPrice] = useState(() => searchParams.get('maxPrice') || "");
+    const [minPrice, setMinPrice] = useState(() => searchParams.get('minPrice') || "")
+    const [maxPrice, setMaxPrice] = useState(() => searchParams.get('maxPrice') || "")
 
-    // Apply filters from URL on component mount
     useEffect(() => {
         if (selectedCategories.length > 0 || selectedSizes.length > 0 || minPrice || maxPrice) {
             applyFilters();
         }
     }, []);
 
-    // Categories with their display and value properties
     const categories = [
         { display: "Signature Cakes", value: "signature" },
         { display: "Dedication Cakes", value: "dedication" },
@@ -74,24 +71,25 @@ const SearchFilters = ({ onFilterChange }) => {
     };
 
     const removeFilters = () => {
-        setSelectedCategories([])
-        setSelectedSizes([])
-        setMinPrice("")
-        setMaxPrice("")
-
+        setSelectedCategories([]);
+        setSelectedSizes([]);
+        setMinPrice("");
+        setMaxPrice("");
+    
         onFilterChange({
             categories: null,
             sizes: null,
             minPrice: null,
             maxPrice: null
-        })
-        window.scrollTo(0, 300)
+        }, true); 
+        
+        window.scrollTo(0, 300);
     }
 
     return (
         <div>
             <div className="font-inter text-textdark">
-                <h2 className="font-domine font-bold text-xl mb-8">Search Filter</h2>
+                <h2 className="font-domine font-bold text-xl mb-8">Filters</h2>
 
                 <h3 className="text-md mb-4 font-medium">By Category</h3>
                 {categories.map(category => (

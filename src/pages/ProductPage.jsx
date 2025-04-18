@@ -81,8 +81,7 @@ const ProductPage = () => {
       setTimeout(() => setShowSuccess(false), 3000)
     }
 
-
-
+  
     const calculatePrice = (basePrice, selectedSize, allSizes) => {
       const sizeIndex = allSizes.indexOf(selectedSize)
       const priceModifier = 1 + (sizeIndex * 0.3)

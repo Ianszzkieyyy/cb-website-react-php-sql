@@ -6,7 +6,7 @@ const ProductGrid = ({activeFilters}) => {
     const [products, setProducts] = useState([])
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
-
+    const [filteredProducts, setFilteredProducts] = useState([])
     const [currentPage, setCurrentPage] = useState(1)
     const cardsPerPage = 12
 
@@ -31,6 +31,14 @@ const ProductGrid = ({activeFilters}) => {
                 
                 if (activeFilters?.maxPrice) {
                     queryParams.push(`maxPrice=${activeFilters.maxPrice}`);
+                }
+
+                if (activeFilters?.search) {
+                    queryParams.push(`search=${encodeURIComponent(activeFilters.search)}`);
+                }
+
+                if (activeFilters?.sort) {
+                    queryParams.push(`sort=${activeFilters.sort}`);
                 }
 
                 const queryString = queryParams.length > 0 ? `?${queryParams.join('&')}` : '';
@@ -61,6 +69,21 @@ const ProductGrid = ({activeFilters}) => {
         fetchProducts()
     }, [activeFilters])
 
+
+    useEffect(() => {
+        if (!activeFilters?.search) {
+            setFilteredProducts(products);
+            return;
+        }
+        
+        const searchLower = activeFilters.search.toLowerCase();
+        const filtered = products.filter(product => 
+            product.name.toLowerCase().includes(searchLower)
+        );
+        
+        setFilteredProducts(filtered);
+    }, [products, activeFilters?.search]);
+
     useEffect(() => {
         setCurrentPage(1);
     }, [activeFilters]);
@@ -81,10 +104,21 @@ const ProductGrid = ({activeFilters}) => {
         )
     }
 
+    const productsToDisplay = activeFilters?.search ? filteredProducts : products;
+    
+    if (productsToDisplay.length === 0) {
+        return (
+            <div className="text-center py-8">
+                <p className="text-lg font-medium">No products found matching your search criteria.</p>
+                <p className="text-gray-500 mt-2">Try using different keywords or filters.</p>
+            </div>
+        );
+    }
+
     const lastCardIndex = currentPage * cardsPerPage
     const firstCardIndex = lastCardIndex - cardsPerPage
 
-    const currentCards = products.slice(firstCardIndex, lastCardIndex)
+    const currentCards = productsToDisplay.slice(firstCardIndex, lastCardIndex)
 
     return (
         <div>
@@ -94,7 +128,7 @@ const ProductGrid = ({activeFilters}) => {
                 ))}
             </div>
             <div>
-                <Pagination totalCards={products.length} cardsPerPage={cardsPerPage} setCurrentPage={setCurrentPage} currentPage={currentPage} />
+                <Pagination totalCards={productsToDisplay.length} cardsPerPage={cardsPerPage} setCurrentPage={setCurrentPage} currentPage={currentPage} />
             </div>
         </div>
 

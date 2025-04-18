@@ -7,15 +7,22 @@ import SearchFilters from "../components/SearchFilters";
 
 import Navbar from "../components/Navbar";
 import ProductGrid from "../components/ProductGrid";
+import RadioButton from "../components/RadioButton";
+
+import SearchIcon from "../assets/icons/search.svg?react"
 
 const ProductsPage = () => {
     const [searchParams, setSearchParams] = useSearchParams()
+    const [searchQuery, setSearchQuery] = useState(searchParams.get('search') || '');
+    const [selectedSort, setSelectedSort] = useState(searchParams.get('sort') || 'alphabetical');
 
     const [activeFilters, setActiveFilters] = useState({
         categories: searchParams.get('categories') ? searchParams.get('categories').split(',') : null,
         sizes: searchParams.get('sizes') ? searchParams.get('sizes').split(',') : null,
         minPrice: searchParams.get('minPrice') ? parseFloat(searchParams.get('minPrice')) : null,
         maxPrice: searchParams.get('maxPrice') ? parseFloat(searchParams.get('maxPrice')) : null,
+        search: searchParams.get('search') || '',
+        sort: searchParams.get('sort') || 'alphabetical',
     });
     
 
@@ -23,28 +30,51 @@ const ProductsPage = () => {
         const params = new URLSearchParams();
         
         if (activeFilters.categories) {
-            params.set('categories', activeFilters.categories.join(','));
+            params.set('categories', activeFilters.categories.join(','))
         }
         
         if (activeFilters.sizes) {
-            params.set('sizes', activeFilters.sizes.join(','));
+            params.set('sizes', activeFilters.sizes.join(','))
         }
         
         if (activeFilters.minPrice) {
-            params.set('minPrice', activeFilters.minPrice);
+            params.set('minPrice', activeFilters.minPrice)
         }
         
         if (activeFilters.maxPrice) {
-            params.set('maxPrice', activeFilters.maxPrice);
+            params.set('maxPrice', activeFilters.maxPrice)
+        }
+
+        if (activeFilters.search) {
+            params.set('search', activeFilters.search)
         }
         
         setSearchParams(params);
-    }, [activeFilters, setSearchParams]);
+    }, [activeFilters, setSearchParams])
 
-    const handleFilterChange = (filters) => {
-        setActiveFilters(filters);
+    const handleFilterChange = (filters, resetSort = false) => {
+        if (resetSort) {
+            setSelectedSort('alphabetical')
+            setActiveFilters({
+                ...filters,
+                sort: 'alphabetical'
+            });
+        } else {
+            setActiveFilters({
+                ...filters,
+                sort: activeFilters.sort
+            })
+        }
+    }
+
+    const handleSearchChange = (e) => {
+        const query = e.target.value;
+        setSearchQuery(query);
     };
 
+    const handleApplySort = () => {
+        setActiveFilters({...activeFilters, sort: selectedSort});
+    };
 
     return (
         <div>
@@ -71,15 +101,27 @@ const ProductsPage = () => {
                 <div className="my-16 flex gap-16">
                     <SearchFilters onFilterChange={handleFilterChange}/>
                     <div className="w-0.25 bg-textdark opacity-15"></div>
-                    <div>
+                    <div className="flex-grow">
                         <h2 className="font-domine font-bold text-xl mb-8">Products</h2>
-                        <div className="flex gap-20 mb-16 items-center">
+                        <div className="flex mb-16 items-center gap-8">
                             <h3 className="font-inter text-md font-medium">Sort By</h3>
                             <div className="flex gap-2">
-                                <Button text={"Most Popular"} size="small" shape="pill" type="secondary"/>
-                                <Button text={"Highest Rated"} size="small" shape="pill" type="secondary"/>
-                                <Button text={"Price (High to Low)"} size="small" shape="pill" type="secondary"/>
-                                <Button text={"Price (Low to High)"} size="small" shape="pill" type="secondary"/>
+                                <RadioButton label={"Alphabetical"} value={"alphabetical"} selectedValue={selectedSort} onChange={setSelectedSort} name="sort"/>
+                                <RadioButton label={"Price (High to Low)"} value={"price_desc"} selectedValue={selectedSort} onChange={setSelectedSort} name="sort"/>
+                                <RadioButton label={"Price (Low to High)"} value={"price_asc"} selectedValue={selectedSort} onChange={setSelectedSort} name="sort"/>
+                            </div>
+                            <Button text={"Apply Sort"} type="secondary" size="small" clickFunction={handleApplySort}/>
+                            <div className="flex gap-2 text-sm items-center justify-between border border-primary1/30 rounded-full pl-4 w-1/4 ml-auto ">
+                                <input
+                                    type="text"
+                                    value={searchQuery}
+                                    onChange={handleSearchChange}
+                                    placeholder="Search for products..."
+                                    className="outline-none"
+                                />
+                                <Button icon={SearchIcon} type="primary" size="small" clickFunction={() => {
+                                    setActiveFilters({...activeFilters, search: searchQuery});
+                                }}></Button>
                             </div>
                         </div>
                         {/* Card Logic will go here */}

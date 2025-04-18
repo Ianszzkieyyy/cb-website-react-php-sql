@@ -41,15 +41,14 @@ const Navbar = () => {
                         {cartItems.length > 0 && <div className="w-4 bg-red-400 font-inter text-white text-xs rounded-full absolute -top-2 -right-2 text-center">{cartItems.length}</div>}
                     </div>
                 </HoverCardTrigger>
-                <HoverCardContent className="absolute w-80 -right-10 rounded-lg bg-bglight shadow-none border-2 border-primary1/30">
+                <HoverCardContent className="absolute w-80 -right-10 rounded-lg bg-bglight shadow-md border-1 border-primary1/30">
                     <div className="flex flex-col gap-4">
                         {cartItems.map(item => (
                             <div className="bg-white px-4 py-2 rounded-md">
                                 <MiniCartItem item={item} key={item.cartItemId}/>
                             </div>
                         ))}
-                        <Button text={"View Cart"} size="small" type="primary" shape="square" className="w-full" clickFunction={() => navigate("/cart")}/>
-    
+                        {cartItems.length > 0 ? (<Button text={"View Cart"} size="small" type="primary" shape="square" className="w-full" clickFunction={() => navigate("/cart")}/>) : (<p className="text-sm">You have nothing on your cart yet. Browse now!</p>)}
                     </div>
                 </HoverCardContent>
             </HoverCard>
