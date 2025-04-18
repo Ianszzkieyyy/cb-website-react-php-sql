@@ -1,29 +1,66 @@
-import React, { useState } from "react";
+import React, { useState, useRef } from "react"
+import { useNavigate } from "react-router-dom"
+import { useForm } from "react-hook-form"
+import { useCart } from "../components/context/CartContext"
 
-import { useNavigate } from "react-router-dom";
-import { useForm } from "react-hook-form";
-import { useCart } from "../components/context/CartContext";
+import Navbar from "../components/Navbar"
+import MiniCartItem from "../components/MiniCartItem"
 
-import Navbar from "../components/Navbar";
-import MiniCartItem from "../components/MiniCartItem";
+import GCashIcon from "../assets/icons/gcash.svg?react"
+import GCashQR from "../assets/images/gcash_qr.png"
 
 const CheckoutPage = () => {
     const { cartItems } = useCart()
-    const { register, handleSubmit, formState: {errors} } = useForm()
+    const { register, handleSubmit, setError, setValue, watch, clearErrors, formState: {errors} } = useForm()
     const navigate = useNavigate()
+    const fileInputRef = useRef(null)
 
     const subTotal = cartItems.reduce((acc, item) => acc + item.price, 0)
     const downPayment = subTotal * 0.3
 
     const [selectedMethod, setSelectedMethod] = useState("delivery")
 
+    const uniqueDates = []
+
+    cartItems.forEach(item => {
+        const date = new Date(item.deliveryDate);
+        const formattedDate = `${String(date.getMonth() + 1).padStart(2, '0')}/${String(date.getDate()).padStart(2, '0')}`;
+        if (!uniqueDates.includes(formattedDate)) {
+          uniqueDates.push(formattedDate);
+        }
+    });
+
     const handleGoBack = () => {
-        navigate(-1); 
+        navigate(-1)
     };
 
     const onSubmit = (data) => {
         console.log(data)
     }
+
+    const handleButtonClick = () => {
+        fileInputRef.current.click()
+    };
+    
+    const handleFileChange = (event) => {
+        const file = event.target.files[0]
+        if (file) {
+            const allowedTypes = ["image/png", "image/jpeg"];   
+            if (!allowedTypes.includes(file.type)) {
+                setError("qr_receipt", {
+                  type: "manual",
+                });
+                setValue("qr_receipt", null, { shouldValidate: true });
+                event.target.value = null;
+                return;
+            }
+
+            clearErrors("qr_receipt");
+            setValue("qr_image", file, { shouldValidate: true })
+        }
+    };
+
+    const selectedFile = watch("qr_image")
 
     return (
         <div>
@@ -85,7 +122,7 @@ const CheckoutPage = () => {
                             </div>
 
                             <div className="flex flex-col gap-2 w-full">
-                                <label htmlFor="method" className="text-sm font-semibold">Select Method</label>
+                                <label htmlFor="method" className="text-sm font-semibold">Select Delivery Method</label>
                                 <div className="flex gap-4 mb-4">
                                     <label key="delivery" className={`font-semibold text-sm cursor-pointer px-4 py-2 rounded-full border ${selectedMethod === "delivery" ? 'bg-primary1 text-white outline-primary1 outline-offset-1 outline-1' : 'bg-bglight text-primary1 border-primary1'} transition-all `}>
                                         <input {...register("method")} type="radio" name="method" value="delivery" className="sr-only" checked={selectedMethod === "delivery"} onChange={() => setSelectedMethod("delivery")} />Delivery
@@ -99,36 +136,68 @@ const CheckoutPage = () => {
                         </div>
                     </div>
 
-                    <div className="flex-1 py-12 px-8 bg-white rounded-2xl border-primary1/30 border-2 ml-8">
-                        <h1 className="font-inter font-semibold text-md">Summary</h1>
-                        <div className="h-0.5 bg-gray-200 my-4 w-full"></div>
-                        <div className="flex flex-col w-full h-1/2 overflow-y-auto overflow-x-hidden custom-scrollbar">   
-                            {cartItems.map(item => (
-                                <MiniCartItem item={item} key={item.cartItemId}/>
-                            ))}
+                    <div className="flex-1 flex-col">
+                        <div className="py-6 px-8 bg-white rounded-2xl border-primary1/30 border-2 ml-8 mb-8">
+                            <h1 className="font-inter font-semibold text-md">Summary</h1>
+                            <div className="h-[1.5px] bg-gray-200 my-4 w-full"></div>
+                            <div className="flex flex-col w-full h-36 gap-6 overflow-y-auto overflow-x-hidden">   
+                                {cartItems.map(item => (
+                                    <MiniCartItem item={item} key={item.cartItemId}/>
+                                ))}
+                            </div>
+                            <div className="h-[1.5px] bg-gray-200 my-4 w-full"></div>
+                            <h1 className="font-inter font-semibold text-md">Details</h1>
+                            <div className="flex flex-col gap-2 my-2">
+                                <div className="flex justify-between items-start text-sm font-semibold">
+                                    <h3 className="text-gray-300">Total:</h3>
+                                    <h3>₱{subTotal}</h3>
+                                </div>
+                                <div className="flex justify-between items-start text-sm font-semibold">
+                                    <h3 className="text-gray-300">30% Downpayment:</h3>
+                                    <h3>₱{downPayment}</h3>
+                                </div>
+                                <div className="flex justify-between items-start text-sm font-semibold">
+                                    <h3 className="text-gray-300">Delivery Date(s):</h3>
+                                    <div className="flex flex-col">
+                                        {uniqueDates.map((date, index) => (
+                                          <h3 key={index} className="text-xs">{date}</h3>
+                                        ))}
+                                    </div>
+                                </div>
+                            </div>
                         </div>
-                        <div className="h-0.5 bg-gray-200 my-4 w-full"></div>
-                        <h1 className="font-inter font-semibold text-md">Details</h1>
-                        <div className="flex flex-col gap-2 mt-4">
-                            <div className="flex justify-between items-end text-sm font-semibold">
-                                <h3 className="text-gray-300">Subtotal:</h3>
-                                <h3 className="text-lg">₱{subTotal}</h3>
-                            </div>
-                            <div className="flex justify-between items-center text-sm font-semibold">
-                                <h3 className="text-gray-300">30% Downpayment:</h3>
-                                <h3 className="text-lg">₱{downPayment}</h3>
-                            </div>
-                            <div className="flex justify-between items-center text-sm font-semibold">
-                                <h3 className="text-gray-300">Delivery Date(s):</h3>
-                                {cartItems.map(item => {
-                                    const date = new Date(item.deliveryDate);
-                                    const formattedDate = `${String(date.getMonth() + 1).padStart(2, '0')}/${String(date.getDate()).padStart(2, '0')}`;
-                                    return <h3 className="text-xs">{formattedDate}</h3>;
-                                })}
+                        <div className="pb-8 px-8 bg-white rounded-2xl border-primary1/30 border-2 ml-8">
+                            <img src={GCashQR} alt="" className="w-full" />
+                            <p className="text-xs text-justify mb-4">All online orders require atleast a 30% downpayment via GCash. Balance + delivery fee (if any) is paid on delivery/pickup. Upload your receipt here.</p>
+                            <div>
+                                <input type="file" accept="image/png, image/jpg" {...register("qr_image", {
+                                    required: true
+                                })} 
+                                ref={(e) => {
+                                    register("qr_image")
+                                    fileInputRef.current = e
+                                }}
+                                onChange={handleFileChange}
+                                className="hidden"
+                                />
+                                <button type="button" onClick={handleButtonClick} className="bg-primary1 text-sm font-medium text-white py-2 px-4 rounded-md w-full hover:bg-primary1-darker transition duration-250 ease-in-out flex gap-2 flex-row justify-center items-center cursor-pointer">
+                                    <GCashIcon className="h-4"/>
+                                    Upload GCash Receipt
+                                </button>
+                                {selectedFile && (
+                                  <p className="text-sm text-primary1-darker mt-2">Selected: {selectedFile.name}</p>
+                                )}
+                                {errors.qr_image && <span className="text-red-500 text-sm">Please select an image file</span>}
+                                <button type="submit" className="bg-accent1 mt-2 text-sm font-medium text-white py-2 px-4 rounded-md w-full hover:bg-accent1-darker transition duration-250 ease-in-out flex gap-2 flex-row justify-center items-center cursor-pointer">
+                                    Submit Order
+                                </button>
                             </div>
                         </div>
 
-                        <button type="submit" className="bg-accent1 text-white py-2 px-4 rounded-full w-full hover:bg-accent1-darker transition duration-250 ease-in-out">Proceed to Payment</button>
+                        
+                        
+
+
                     </div>
                 </form>
                 </div>

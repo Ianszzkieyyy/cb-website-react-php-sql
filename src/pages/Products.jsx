@@ -11,7 +11,6 @@ import ProductGrid from "../components/ProductGrid";
 const ProductsPage = () => {
     const [searchParams, setSearchParams] = useSearchParams()
 
-
     const [activeFilters, setActiveFilters] = useState({
         categories: searchParams.get('categories') ? searchParams.get('categories').split(',') : null,
         sizes: searchParams.get('sizes') ? searchParams.get('sizes').split(',') : null,
