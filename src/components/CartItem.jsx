@@ -1,14 +1,12 @@
 import React from "react";
 
 import { useCart } from "./context/CartContext";
-
 import Button from "./Button";
-
 import TrashIcon from "../assets/icons/trash.svg?react"
 
 const CartItem = ({item}) => {
     const { removeFromCart } = useCart()
-
+    
     return (
         <div className="flex gap-12 mb-6">
             <div className="bg-gray-100 flex justify-center overflow-hidden h-24 p-2 rounded-lg">

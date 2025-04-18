@@ -1,5 +1,6 @@
 // tailwind.config.js (ESM version)
 import { defineConfig } from 'tailwindcss'
+import scrollbar from 'tailwind-scrollbar'
 
 export default defineConfig({
   content: [
@@ -13,5 +14,7 @@ export default defineConfig({
       },
     },
   },
-  plugins: [],
+  plugins: [
+    scrollbar,
+  ],
 });

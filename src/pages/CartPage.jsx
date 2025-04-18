@@ -10,6 +10,7 @@ import Button from "../components/Button";
 
 const CartPage = () => {
     const [totalPrice, setTotalPrice] = useState(0)
+
     const { cartItems } = useCart()
     const navigate = useNavigate()
  
@@ -31,6 +32,7 @@ const CartPage = () => {
                 <div className="my-8 mx-32 rounded-2xl px-8 py-8 bg-white shadow-md">
                     <h1 className="font-domine font-bold text-2xl">My Cart ({cartItems.length})</h1>
                     <div className="h-0.5 bg-gray-200 my-4"></div>
+                    
                     {cartItems.map(item => (
                         <CartItem item={item}/>
                     ))}
