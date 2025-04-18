@@ -5,13 +5,14 @@ import { useCart } from "../components/context/CartContext"
 
 import Navbar from "../components/Navbar"
 import MiniCartItem from "../components/MiniCartItem"
+import { Progress } from "@/components/ui/progress"
 
 import GCashIcon from "../assets/icons/gcash.svg?react"
 import GCashQR from "../assets/images/gcash_qr.png"
 
 const CheckoutPage = () => {
     const { cartItems } = useCart()
-    const { register, handleSubmit, setError, setValue, watch, clearErrors, formState: {errors} } = useForm()
+    const { register, handleSubmit, setError, setValue, watch, clearErrors, formState: {errors, dirtyFields} } = useForm()
     const navigate = useNavigate()
     const fileInputRef = useRef(null)
 
@@ -19,6 +20,16 @@ const CheckoutPage = () => {
     const downPayment = subTotal * 0.3
 
     const [selectedMethod, setSelectedMethod] = useState("delivery")
+
+    const totalFields = 4
+    const validFields = [
+        dirtyFields.name && !errors.name,
+        dirtyFields.email && !errors.email,
+        dirtyFields.address && !errors.address,
+        dirtyFields.phone && !errors.phone,
+    ].filter(Boolean).length;
+
+    const progress = (validFields / totalFields) * 100;
 
     const uniqueDates = []
 
@@ -69,8 +80,8 @@ const CheckoutPage = () => {
                 <button onClick={handleGoBack} className="text-primary1 text-sm underline decoration-solid underline-offset-3 cursor-pointer hover:text-primary1-darker transition duration-250 ease-in-out">{"< Go Back"}</button>
                 <div className="my-8">
                 <form onSubmit={handleSubmit(onSubmit)} className="flex">
-
-                    <div className="flex-2 p-16 bg-white rounded-2xl border-primary1/30 border-2">
+                    <div className="relative overflow-hidden flex-2 p-16 bg-white rounded-2xl border-primary1/30 border-2">
+                        <Progress value={progress} className="absolute top-0 left-0 h-1 rounded-full" />
                         <h1 className="font-inter font-semibold text-2xl">Checkout</h1>
                         <div className="h-0.5 bg-gray-200 my-4 w-full"></div>
                         <div className="flex flex-col gap-8 w-full">
