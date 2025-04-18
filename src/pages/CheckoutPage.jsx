@@ -58,15 +58,15 @@ const CheckoutPage = () => {
         if (file) {
             const allowedTypes = ["image/png", "image/jpeg"];   
             if (!allowedTypes.includes(file.type)) {
-                setError("qr_receipt", {
+                setError("qr_image", {
                   type: "manual",
                 });
-                setValue("qr_receipt", null, { shouldValidate: true });
+                setValue("qr_image", null, { shouldValidate: true });
                 event.target.value = null;
                 return;
             }
 
-            clearErrors("qr_receipt");
+            clearErrors("qr_image");
             setValue("qr_image", file, { shouldValidate: true })
         }
     };
