@@ -27,7 +27,7 @@ const DatePicker = ({date, setDate, dayAfterTomorrow}) => {
               {date ? format(date, "PPP") : <span>Pick a date</span>}
             </Button>
           </PopoverTrigger>
-          <PopoverContent className="w-auto p-0">
+          <PopoverContent className="w-auto">
             <Calendar
               mode="single"
               selected={date}

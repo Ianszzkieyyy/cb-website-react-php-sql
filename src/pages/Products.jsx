@@ -1,13 +1,17 @@
-import React, {useState, useEffect} from "react";
-import { useSearchParams } from "react-router-dom";
+import React, {useState, useEffect} from "react"
+import { useSearchParams } from "react-router-dom"
 
 import ProductHeaderImg from "../assets/images/product_header_img.png"
-import Button from "../components/Button";
-import SearchFilters from "../components/SearchFilters";
+import Button from "../components/Button"
+import Alert from "../components/Alert"
+import SearchFilters from "../components/SearchFilters"
 
-import Navbar from "../components/Navbar";
-import ProductGrid from "../components/ProductGrid";
-import RadioButton from "../components/RadioButton";
+import Navbar from "../components/Navbar"
+import ProductGrid from "../components/ProductGrid"
+import RadioButton from "../components/RadioButton"
+import CustomCakeDialog from "@/components/CustomCakeDialog"
+
+import { Dialog, DialogContent, DialogTrigger} from "@/components/ui/dialog"
 
 import SearchIcon from "../assets/icons/search.svg?react"
 
@@ -15,6 +19,9 @@ const ProductsPage = () => {
     const [searchParams, setSearchParams] = useSearchParams()
     const [searchQuery, setSearchQuery] = useState(searchParams.get('search') || '');
     const [selectedSort, setSelectedSort] = useState(searchParams.get('sort') || 'alphabetical');
+    const [showAlert, setShowAlert] = useState(false);
+
+    const [open, setOpen] = useState(false);
 
     const [activeFilters, setActiveFilters] = useState({
         categories: searchParams.get('categories') ? searchParams.get('categories').split(',') : null,
@@ -79,13 +86,26 @@ const ProductsPage = () => {
     return (
         <div>
             <Navbar />
-            <div className="mx-32">
+            <div className="relative mx-32">
+                <Alert className={"fixed w-2/5 top-18 left-1/2 transform -translate-x-1/2 z-50"} showAlert={showAlert} head={"Success!"} infoText={"Your custom cake has been added to the cart."}/>
                 <div className="mt-16 bg-accent3 flex flex-row w-full h-auto">
                     <div className="flex-grow p-16 flex flex-col justify-center">
                         <h1 className="font-domine font-bold text-textdark text-4xl mb-4 ">Perfectly Sweet, Undeniably Creative</h1>
                         <p className="w-2xl font-inter mb-8">Browse through our collection of sweets and pastries, whether it be for your next unforgettable celebration, or for those cravings you cannot resist.</p>
                         <div className="flex gap-4">
-                            <Button text={"Customize your Cake"} type="primary" shape="square"/>
+                            <Dialog open={open} onOpenChange={setOpen} modal={false}>
+                                <DialogTrigger>
+                                    <Button text={"Customize your Cake"} type="primary" shape="square"/>
+                                </DialogTrigger>
+                                {open && (
+                                    <div className="fixed inset-0 bg-black/50 backdrop-blur-sm z-40" />
+                                )}
+                                <DialogContent className="min-w-3/5 bg-white py-8 shadow-2xl">
+                                    <CustomCakeDialog toggleDialog={() => setOpen(false)} setShowSuccess={setShowAlert} />
+                                </DialogContent>
+                            </Dialog>
+                            
+                            
                             <Button text={"Browse our Collection"} type="secondary" shape="square"/>
                         </div>
                     </div>
@@ -103,7 +123,7 @@ const ProductsPage = () => {
                     <div className="w-0.25 bg-textdark opacity-15"></div>
                     <div className="flex-grow">
                         <h2 className="font-domine font-bold text-xl mb-8">Products</h2>
-                        <div className="flex mb-16 items-center gap-8">
+                        <div className="font-inter flex mb-16 items-center gap-8">
                             <h3 className="font-inter text-md font-medium">Sort By</h3>
                             <div className="flex gap-2">
                                 <RadioButton label={"Alphabetical"} value={"alphabetical"} selectedValue={selectedSort} onChange={setSelectedSort} name="sort"/>

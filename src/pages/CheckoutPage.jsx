@@ -58,20 +58,20 @@ const CheckoutPage = () => {
         if (file) {
             const allowedTypes = ["image/png", "image/jpeg"];   
             if (!allowedTypes.includes(file.type)) {
-                setError("qr_image", {
+                setError("receipt_image", {
                   type: "manual",
                 });
-                setValue("qr_image", null, { shouldValidate: true });
+                setValue("receipt_image", null, { shouldValidate: true });
                 event.target.value = null;
                 return;
             }
 
-            clearErrors("qr_image");
-            setValue("qr_image", file, { shouldValidate: true })
+            clearErrors("receipt_image");
+            setValue("receipt_image", file, { shouldValidate: true })
         }
     };
 
-    const selectedFile = watch("qr_image")
+    const selectedFile = watch("receipt_image")
 
     return (
         <div>
@@ -179,13 +179,13 @@ const CheckoutPage = () => {
                         </div>
                         <div className="pb-8 px-8 bg-white rounded-2xl border-primary1/30 border-2 ml-8">
                             <img src={GCashQR} alt="" className="w-full" />
-                            <p className="text-xs text-justify mb-4">All online orders require atleast a 30% downpayment via GCash. Balance + delivery fee (if any) is paid on delivery/pickup. Upload your receipt here.</p>
+                            <p className="text-xs text-justify mb-4">All online orders require atleast a 30% downpayment via GCash. Balance + delivery fee (if any) is paid on delivery/pickup. Upload your receipt here. Receipts are subject for validation before confirmation of order.</p>
                             <div>
-                                <input type="file" accept="image/png, image/jpg" {...register("qr_image", {
+                                <input type="file" accept="image/png, image/jpg" {...register("receipt_image", {
                                     required: true
                                 })} 
                                 ref={(e) => {
-                                    register("qr_image")
+                                    register("receipt_image")
                                     fileInputRef.current = e
                                 }}
                                 onChange={handleFileChange}
@@ -198,7 +198,7 @@ const CheckoutPage = () => {
                                 {selectedFile && (
                                   <p className="text-sm text-primary1-darker mt-2">Selected: {selectedFile.name}</p>
                                 )}
-                                {errors.qr_image && <span className="text-red-500 text-sm">Please select an image file</span>}
+                                {errors.receipt_image && <span className="text-red-500 text-sm">Please select an image file</span>}
                                 <button type="submit" className="bg-accent1 mt-2 text-sm font-medium text-white py-2 px-4 rounded-md w-full hover:bg-accent1-darker transition duration-250 ease-in-out flex gap-2 flex-row justify-center items-center cursor-pointer">
                                     Submit Order
                                 </button>

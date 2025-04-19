@@ -134,6 +134,7 @@ const ProductPage = () => {
           image: product.image
         };
         
+        console.log(cartItem)
         addToCart(cartItem)
         handleShowAdded()
       }
