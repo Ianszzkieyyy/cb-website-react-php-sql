@@ -3,6 +3,7 @@ import axios from "axios"
 import { useNavigate } from "react-router-dom"
 import { useForm } from "react-hook-form"
 import { useCart } from "../components/context/CartContext"
+import moment from "moment"
 
 import Navbar from "../components/Navbar"
 import MiniCartItem from "../components/MiniCartItem"
@@ -36,11 +37,13 @@ const CheckoutPage = () => {
 
     cartItems.forEach(item => {
         const date = new Date(item.deliveryDate);
-        const formattedDate = `${String(date.getMonth() + 1).padStart(2, '0')}/${String(date.getDate()).padStart(2, '0')}`;
+        const formattedDate = `${String(date.getMonth() + 1).padStart(2, '0')}/${String(date.getDate()).padStart(2, '0')}`
+        
         if (!uniqueDates.includes(formattedDate)) {
-          uniqueDates.push(formattedDate);
+            uniqueDates.push(formattedDate)
+            item.deliveryDate = moment(date).format('YYYY-MM-DD')
         }
-    });
+    })
 
     const handleGoBack = () => {
         navigate(-1)
