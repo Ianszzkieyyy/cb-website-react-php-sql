@@ -1,4 +1,5 @@
 import React, { useState, useRef } from "react"
+import axios from "axios"
 import { useNavigate } from "react-router-dom"
 import { useForm } from "react-hook-form"
 import { useCart } from "../components/context/CartContext"
@@ -46,7 +47,36 @@ const CheckoutPage = () => {
     };
 
     const onSubmit = (data) => {
+        const formData = new FormData()
+
+        formData.append("name", data.name)
+        formData.append("email", data.email)
+        formData.append("phone", data.phone)
+        formData.append("fb", data.fb)
+        
+        formData.append("receipt_image", data.receipt_image)
+        formData.append("address", data.address)
+        formData.append("method", data.method)
+        formData.append("total_price", subTotal)
+
+        cartItems.forEach((item, index) => {
+            for (const key in item) {
+                if (key !== "cartItemId") {
+                    console.log(`order_item[${index}][${key}]`, item[key])
+                    formData.append(`order_item[${index}][${key}]`, item[key])
+                }
+            }
+        })
+
+        axios.post("http://localhost/cakes_bakes_backend/submit_order.php", formData, {
+            headers: {
+                "Content-Type": "multipart/form-data",
+            }
+        })
+        .then(res => console.log('Success:', res.data))
+        .catch(err => console.error('Error:', err))
         console.log(data)
+        console.log(formData)
     }
 
     const handleButtonClick = () => {
@@ -204,11 +234,6 @@ const CheckoutPage = () => {
                                 </button>
                             </div>
                         </div>
-
-                        
-                        
-
-
                     </div>
                 </form>
                 </div>

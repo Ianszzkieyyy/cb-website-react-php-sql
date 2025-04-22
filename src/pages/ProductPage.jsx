@@ -1,5 +1,6 @@
 import React, {useState, useEffect} from "react";
 import { useParams, useNavigate } from "react-router-dom";
+import { isBefore, startOfDay } from "date-fns";
 
 import { useCart } from "../components/context/CartContext";
 
@@ -10,9 +11,6 @@ import DatePicker from "../components/DatePicker";
 
 import CartIcon from "../assets/icons/shopping-cart.svg?react"
 
-
-const dayAfterTomorrow = new Date()
-dayAfterTomorrow.setDate(dayAfterTomorrow.getDate() + 2)
 
 const ProductPage = () => {
     const { id } = useParams()
@@ -27,8 +25,12 @@ const ProductPage = () => {
     const [selectedSize, setSelectedSize] = useState("4x2")
     const [selectedFlavor, setSelectedFlavor] = useState("Moist Choco")
     const [dedicationMsg, setDedicationMsg] = useState("")
-    const [date, setDate] = useState(dayAfterTomorrow)
+    
     const [quantity, setQuantity] = useState(1)
+
+    const dayAfterTomorrow = new Date()
+    dayAfterTomorrow.setDate(dayAfterTomorrow.getDate() + 2)
+    const [date, setDate] = useState(dayAfterTomorrow)
 
     const { addToCart } = useCart()
 
@@ -99,11 +101,13 @@ const ProductPage = () => {
       setDedicationMsg(e.target.value)
     }
 
-    const increment = () => {
+    const increment = (e) => {
+      e.preventDefault()
       if (quantity < 3) setQuantity(prev => prev + 1); 
     };
   
-    const decrement = () => {
+    const decrement = (e) => {
+      e.preventDefault()
       if (quantity > 1) setQuantity(prev => prev - 1); 
     };
 
@@ -111,7 +115,8 @@ const ProductPage = () => {
       const newErrors = {}
 
       if (!dedicationMsg) newErrors.dedication = 'Please enter a dedication or N/A'
-      if (!date || date < dayAfterTomorrow) newErrors.date = 'Please select a valid delivery date'
+      if (!date || isBefore(startOfDay(date), startOfDay(dayAfterTomorrow))) 
+        newErrors.date = 'Please select a valid delivery date'
 
       setFormError(newErrors)
       return Object.keys(newErrors).length === 0
@@ -250,14 +255,14 @@ const ProductPage = () => {
                 <p className="text-sm text-gray-500 mb-4">Maximum of 3 items per order. </p>
                 <div className="items-center gap-2 mb-12 border-1 border-primary1 inline-flex rounded-full p-1">
                   <button
-                    onClick={decrement}
+                    onClick={(e) => decrement(e)}
                     className="w-8 h-8 text-md rounded-full bg-bglight hover:bg-accent2 active:bg-primary1  transition-all"
                   >
                     -
                   </button>
                   <span className="text-lg font-medium w-10 text-center">{quantity}</span>
                   <button
-                    onClick={increment}
+                    onClick={(e) => increment(e)}
                     className="w-8 h-8 text-md rounded-full bg-bglight hover:bg-accent2 active:bg-primary1 transition-all"
                   >
                     +

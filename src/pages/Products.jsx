@@ -130,7 +130,7 @@ const ProductsPage = () => {
                                 <RadioButton label={"Price (High to Low)"} value={"price_desc"} selectedValue={selectedSort} onChange={setSelectedSort} name="sort"/>
                                 <RadioButton label={"Price (Low to High)"} value={"price_asc"} selectedValue={selectedSort} onChange={setSelectedSort} name="sort"/>
                             </div>
-                            <Button text={"Apply Sort"} type="secondary" size="small" clickFunction={handleApplySort}/>
+                            <Button text={"Apply Sort"} type="primary" size="small" clickFunction={handleApplySort}/>
                             <div className="flex gap-2 text-sm items-center justify-between border border-primary1/30 rounded-full pl-4 w-1/4 ml-auto ">
                                 <input
                                     type="text"

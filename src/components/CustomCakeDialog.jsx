@@ -1,11 +1,11 @@
 import React, {useState, useEffect} from "react";
 import { useCart } from "./context/CartContext";
+import { isBefore, startOfDay } from "date-fns"
 import Button from "./Button";
 import RadioButton from "./RadioButton";
 import DatePicker from "./DatePicker";
 
-const dayAfterTomorrow = new Date()
-dayAfterTomorrow.setDate(dayAfterTomorrow.getDate() + 2)
+
 
 const CustomCakeDialog = ({toggleDialog, setShowSuccess }) => {
     const [cakeName, setCakeName] = useState('')
@@ -13,12 +13,15 @@ const CustomCakeDialog = ({toggleDialog, setShowSuccess }) => {
     const [selectedSize, setSelectedSize] = useState('4x2')
     const [selectedFlavor, setSelectedFlavor] = useState("Moist Choco")
     const [dedicationMsg, setDedicationMsg] = useState("")
-    const [date, setDate] = useState(dayAfterTomorrow)
     const [quantity, setQuantity] = useState(1)
     const [inspirationImage, setInspirationImage] = useState(null)
     const [errors, setErrors] = useState({})
 
     const { addToCart } = useCart()
+
+    const dayAfterTomorrow = new Date()
+    dayAfterTomorrow.setDate(dayAfterTomorrow.getDate() + 2)
+    const [date, setDate] = useState(dayAfterTomorrow)
 
 
     const handleTextChange = (e, setter) => {
@@ -54,7 +57,9 @@ const CustomCakeDialog = ({toggleDialog, setShowSuccess }) => {
         if (!cakeName.trim()) newErrors.cakeName = "Cake name is required.";
         if (!inspirationImage) newErrors.image = "Please upload an inspiration image.";
         if (dedicationMsg.length > 200) newErrors.dedication = "Dedication message must be under 200 characters.";
-        if (!date || date < dayAfterTomorrow) newErrors.date = "Invalid pickup date.";
+        if (!date || isBefore(startOfDay(date), startOfDay(dayAfterTomorrow))) {
+            newErrors.date = "Invalid pickup date.";
+        }
     
         setErrors(newErrors);
         return Object.keys(newErrors).length === 0;
@@ -69,7 +74,7 @@ const CustomCakeDialog = ({toggleDialog, setShowSuccess }) => {
                 const formData = new FormData();
                 formData.append("image", inspirationImage); // File from input
     
-                const response = await fetch("http://localhost/cakes_bakes_backend/upload.php", {
+                const response = await fetch("http://localhost/cakes_bakes_backend/upload_custom.php", {
                     method: "POST",
                     body: formData,
                 });
@@ -178,7 +183,7 @@ const CustomCakeDialog = ({toggleDialog, setShowSuccess }) => {
                     <div className="flex-1">
                         <div className="flex flex-col gap-2 mb-4 text-sm">
                             <label htmlFor="dedication">Enter your dedication message</label>
-                            <textarea className="border border-primary1/30 rounded-xl py-2 px-4 h-44 resize-none" placeholder="Enter your requests, dedications, and customizations here. (Max of 200 Characters)" id="dedication" maxLength={200} onChange={(e) => handleTextChange(e, setDedicationMsg)} />
+                            <textarea className="border border-primary1/30 rounded-xl py-2 px-4 h-44 resize-none" placeholder="Enter your requests, dedications, and customizations here. (Max of 300 Characters)" id="dedication" maxLength={300} onChange={(e) => handleTextChange(e, setDedicationMsg)} />
                             {errors.dedication && <p className="text-red-500 text-sm mt-1">{errors.dedication}</p>}
                         </div>
                         <div className="flex flex-col gap-2 mb-4 text-sm">
