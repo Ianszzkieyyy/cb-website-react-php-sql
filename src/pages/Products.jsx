@@ -106,7 +106,7 @@ const ProductsPage = () => {
                             </Dialog>
                             
                             
-                            <Button text={"Browse our Collection"} type="secondary" shape="square"/>
+                            <Button text={"Browse our Collection"} type="secondary" shape="square" clickFunction={() => window.scrollTo(0, 400)}/>
                         </div>
                     </div>
                     <div className="overflow-hidden relative w-2/5">
