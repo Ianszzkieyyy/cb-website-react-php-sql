@@ -87,13 +87,18 @@ const ProductPage = () => {
     const calculatePrice = (basePrice, selectedSize, allSizes) => {
       const sizeIndex = allSizes.indexOf(selectedSize)
       const priceModifier = 1 + (sizeIndex * 0.3)
-      return (basePrice * priceModifier).toFixed(2)
+      const rawPrice = basePrice * priceModifier
+      return (Math.round(rawPrice / 100) * 100).toFixed(2)
     }
+    
 
     useEffect(() => {
       if (product && product.price) {
-        const updatedPrice = calculatePrice(product.price, selectedSize, product.sizes);
-        setCalculatedPrice(updatedPrice);
+        if (selectedSize === product.sizes[0]) setCalculatedPrice(product.price)
+        else {
+          const updatedPrice = calculatePrice(product.price, selectedSize, product.sizes);
+          setCalculatedPrice(updatedPrice);
+        }
       }
     }, [selectedSize, product]);
 
